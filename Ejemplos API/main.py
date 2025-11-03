@@ -9,18 +9,6 @@ import datetime
 import time
 
 
-
-# Paso 1. Crear la base de datos de ejemplo con las tablas definidas
-engine = create_engine("sqlite:///videojuegos.db", echo=False) # Conexión a una base de datos SQLite, True para ver el log de SQL. Si no existe, la crea, si existe, se conecta.
-BaseModel.metadata.create_all(engine)  # Crea las tablas en la base de datos según los modelos definidos
-
-# Paso 2. Obtener datos de la API y almacenarlos en la base de datos
-videojuegos = []
-key = "08c18ae30e654ff499c546879ec660f2"  # Reemplaza con tu clave de API válida
-pagina_inicial = 3
-pagina_final = 10  # Número de páginas a obtener
-page_size = 40  # Limitar a 40 resultados por página
-
 def insertar_videojuego(id, nombre, fecha_lanzamiento, imagen, valoracion):
     with Session(engine) as session:
         select_stmt = select(Videojuego_rawg).filter_by(id = id) # Consulta para verificar si el videojuego ya existe
@@ -38,6 +26,18 @@ def insertar_videojuego(id, nombre, fecha_lanzamiento, imagen, valoracion):
             print(f"Videojuego con id {id} insertado en la base de datos.")
 
 
+# Aquí empieza el programa principal
+
+# Paso 1. Crear la base de datos de ejemplo con las tablas definidas
+engine = create_engine("sqlite:///videojuegos.db", echo=False) # Conexión a una base de datos SQLite, True para ver el log de SQL. Si no existe, la crea, si existe, se conecta.
+BaseModel.metadata.create_all(engine)  # Crea las tablas en la base de datos según los modelos definidos
+
+# Paso 2. Obtener datos de la API y almacenarlos en la base de datos
+videojuegos = []
+key = "08c18ae30e654ff499c546879ec660f2"  # Reemplaza con tu clave de API válida
+pagina_inicial = 3
+pagina_final = 10  # Número de páginas a obtener
+page_size = 40  # Limitar a 40 resultados por página
 
 for page in range(pagina_inicial, pagina_final + 1):
     url = f"https://api.rawg.io/api/games?key={key}&page={page}&page_size={page_size}"  # URL de la API con el parámetro page_size para limitar resultados
